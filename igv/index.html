@@ -3,53 +3,187 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Genome Browser — Coming Soon</title>
+  <title>Genome Browser — Liu et al. 2025</title>
+  <script src="https://cdn.jsdelivr.net/npm/igv@3.1.2/dist/igv.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: "Helvetica Neue", Arial, sans-serif;
       background: #f9f8f6;
       color: #1a1a1a;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       min-height: 100vh;
-      text-align: center;
-      padding: 2rem;
     }
-    .label {
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #aaa;
-      margin-bottom: 1rem;
+
+    header {
+      background: #fff;
+      border-bottom: 1px solid #e0ddd8;
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      color: #333;
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
     }
-    p {
-      font-size: 0.92rem;
-      color: #777;
-      max-width: 420px;
-      line-height: 1.6;
-      margin-bottom: 2rem;
-    }
-    a {
-      font-size: 0.85rem;
+
+    .back-link {
+      font-size: 0.78rem;
       color: #2a6496;
       text-decoration: none;
+      letter-spacing: 0.02em;
     }
-    a:hover { text-decoration: underline; }
+
+    .back-link:hover { text-decoration: underline; }
+
+    .page-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .page-subtitle {
+      font-size: 0.78rem;
+      color: #888;
+    }
+
+    .legend {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: #555;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      padding: 1rem 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    #igv-div {
+      background: #fff;
+      border: 1px solid #e0ddd8;
+      border-radius: 6px;
+      min-height: 600px;
+    }
+
+    .genome-note {
+      font-size: 0.75rem;
+      color: #aaa;
+      text-align: right;
+    }
+
+    footer {
+      border-top: 1px solid #e0ddd8;
+      padding: 1rem 2rem;
+      font-size: 0.75rem;
+      color: #aaa;
+      text-align: center;
+    }
+
+    footer a {
+      color: #888;
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-  <div class="label">Genome Browser</div>
-  <h1>Coming Soon</h1>
-  <p>IGV genome tracks will be available here. Check back after publication.</p>
-  <a href="../">← Back to main page</a>
+
+<header>
+  <div class="header-left">
+    <a class="back-link" href="../">← Back to main page</a>
+    <div class="page-title">Genome Browser</div>
+    <div class="page-subtitle">Liu et al. 2025 &nbsp;·&nbsp; <em>C. elegans</em> ce11 (WBcel235)</div>
+  </div>
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#33cc00;"></div>
+      CEH-43 NanoDam signal
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#33cc00; opacity:0.6;"></div>
+      NanoDam peaks
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:#996600;"></div>
+      CEH-43 ChIP-seq (ENCODE)
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="igv-div"></div>
+  <div class="genome-note">ChIP-seq data: ENCFF420MPO (Kudron et al., 2024)</div>
+</main>
+
+<footer>
+  <a href="https://doi.org/10.1101/2025.10.17.682973" target="_blank" rel="noopener">bioRxiv preprint</a>
+  &nbsp;·&nbsp;
+  Powered by <a href="https://github.com/igvteam/igv.js" target="_blank" rel="noopener">igv.js</a>
+</footer>
+
+<script>
+  igv.createBrowser(document.getElementById('igv-div'), {
+    genome: 'ce11',
+    locus: 'chrX:10490701-10538162',
+    tracks: [
+      {
+        type: 'wig',
+        format: 'bedgraph',
+        url: './data/CEH-43_D12_n2-vs-Dam_D12_n1.gatc.bedgraph.quant.norm.average.bedgraph',
+        name: 'CEH-43 NanoDam',
+        color: '#33cc00',
+        autoscale: false,
+        min: -0.3,
+        max: 1.0,
+        height: 80
+      },
+      {
+        type: 'annotation',
+        format: 'bed',
+        url: './data/25.reproPeak.bed',
+        name: 'NanoDam Peaks',
+        color: '#33cc00',
+        displayMode: 'EXPANDED',
+        height: 50
+      },
+      {
+        type: 'annotation',
+        format: 'bigBed',
+        url: './data/ceh-43_ENCFF420MPO.bigBed',
+        name: 'CEH-43 ChIP-seq (ENCODE)',
+        color: '#996600',
+        height: 50
+      }
+    ]
+  });
+</script>
+
 </body>
 </html>
